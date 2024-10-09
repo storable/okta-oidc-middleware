@@ -95,6 +95,7 @@ oidcUtil.createClient = context => {
 };
 
 oidcUtil.bootstrapPassportStrategy = context => {
+  const passport = context.passport;
   const oidcStrategy = new OpenIdClientStrategy({
     params: {
       scope: context.options.scope
