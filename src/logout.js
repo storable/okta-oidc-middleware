@@ -21,15 +21,15 @@ const makeErrorHandler = emitter => err => {
   }, 1);
 };
 
-const makeAuthorizationHeader = ({ client_id, client_secret }) => 
+const makeAuthorizationHeader = ({ client_id, client_secret }) =>
   'Basic ' + Buffer.from(`${client_id}:${client_secret}`).toString('base64');
 
 const makeTokenRevoker = ({ issuer, client_id, client_secret, errorHandler }) => {
   const revokeEndpoint = `${issuer}/v1/revoke`;
-  return ({ token_hint, token }) => { 
-    return fetch(revokeEndpoint, { 
+  return ({ token_hint, token }) => {
+    return fetch(revokeEndpoint, {
       method: 'POST',
-      headers: { 
+      headers: {
         'accepts': 'application/json',
         'content-type': 'application/x-www-form-urlencoded',
         'authorization': makeAuthorizationHeader({ client_id, client_secret }),
@@ -45,7 +45,7 @@ const makeTokenRevoker = ({ issuer, client_id, client_secret, errorHandler }) =>
 };
 
 
-logout.forceLogoutAndRevoke = context => { 
+logout.forceLogoutAndRevoke = context => {
   const emitter = context.emitter;
   let { issuer, client_id, client_secret } = context.options;
   const REVOKABLE_TOKENS = ['refresh_token', 'access_token'];
@@ -65,6 +65,7 @@ logout.forceLogoutAndRevoke = context => {
 
     // clear local session
     req.logout();
+    req.session.destroy(); // destroy the session to clear the cookie
 
     // attempt all revokes
     await Promise.all(revokes); // these capture (emit) all rejections, no wrapping catch needed, no early fail of .all()
