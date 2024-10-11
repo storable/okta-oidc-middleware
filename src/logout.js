@@ -66,6 +66,7 @@ logout.forceLogoutAndRevoke = context => {
     // clear local session
     req.logout();
     req.session.destroy(); // destroy the session to clear the cookie
+    res.clearCookie('seup-sid'); // clear the cookie
 
     // attempt all revokes
     await Promise.all(revokes); // these capture (emit) all rejections, no wrapping catch needed, no early fail of .all()
